@@ -1,0 +1,23 @@
+{
+  "name": "tran-engineering.ch",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:KeeTraxx/tran-engineering.git",
+  "author": "Khôi Tran <kt@compile.ch>",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server"
+  },
+  "dependencies": {
+    "jquery": "^3.2.1",
+    "jquery.terminal": "^1.5.0"
+  },
+  "devDependencies": {
+    "css-loader": "^0.28.4",
+    "html-webpack-plugin": "^2.29.0",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.2.0",
+    "webpack-dev-server": "^2.5.1"
+  }
+}

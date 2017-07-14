@@ -1,5 +1,5 @@
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
     entry: './index.js',
     devtool: 'eval',
@@ -18,7 +18,10 @@ module.exports = {
             files: {
                 css: 'main.css'
             }
-        })
+        }),
+        new CopyWebpackPlugin([
+            { from: 'static' }
+        ])
     ],
     externals: ['window']
 

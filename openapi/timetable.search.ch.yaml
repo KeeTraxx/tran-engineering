@@ -1,0 +1,188 @@
+openapi: 3.0.3
+info:
+  title: timetable.search.ch
+  description: |-
+    A REST API for public transportation timetables
+  license:
+    name: MIT
+    url: https://mit-license.org/
+  version: 1.0.11
+externalDocs:
+  description: API Specification
+  url: https://timetable.search.ch/api/help
+servers:
+  - url: https://timetable.search.ch/api
+paths:
+  /completion:
+    get:
+      summary: Autocompletion for station names
+      parameters:
+        - name: term
+          in: query
+          description: User input to autocomplete
+          required: true
+          schema:
+            type: string
+        - name: nofavorites
+          in: query
+          schema:
+            $ref: '#/components/schemas/NumBoolean'
+        - name: show_ids
+          in: query
+          schema:
+            $ref: '#/components/schemas/NumBoolean'
+        - name: show_coordinates
+          in: query
+          schema:
+            $ref: '#/components/schemas/NumBoolean'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompletionResponses'
+  /route:
+    get:
+      summary: Route searches
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: via
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: date
+          in: query
+          schema:
+            type: string
+            default: today
+        - name: time
+          in: query
+          schema:
+            type: string
+            default: now
+        - name: time_type
+          in: query
+          schema:
+            type: string
+            enum: [arrival, depart]
+            default: depart
+        - name: num
+          in: query
+          schema:
+            type: number
+        - name: pre
+          in: query
+          schema:
+            type: number
+        - name: show_delays
+          in: query
+          schema:
+            $ref: '#/components/schemas/NumBoolean'
+        - name: show_trackchanges
+          in: query
+          schema:
+            $ref: '#/components/schemas/NumBoolean'
+        - name: show_coordinates
+          in: query
+          schema:
+            $ref: '#/components/schemas/NumBoolean'
+        - name: interest_duration
+          in: query
+          schema:
+            type: number
+            default: 5760
+        - name: transportation_types
+          in: query
+          schema:
+            type: string
+            enum: [train, tram, bus, ship, cableway]
+        - name: summary
+          in: query
+          schema:
+            $ref: '#/components/schemas/NumBoolean'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteSearchResponses'
+components:
+  schemas:
+    NumBoolean:
+      type: number
+      enum: [0,1]
+      default: 0
+    CompletionResponses:
+      type: array
+      items:
+        $ref: '#/components/schemas/CompletionResponse'
+    CompletionResponse:
+      type: object
+      required:
+        - label
+        - html
+        - iconClass
+      properties:
+        label:
+          type: string
+        html:
+          type: string
+        iconClass:
+          type: string
+        x:
+          type: number
+        y:
+          type: number
+        lat:
+          type: number
+        lon:
+          type: number
+    RouteSearchResponses:
+      type: object
+      properties:
+        count:
+          type: number
+        min_duration:
+          type: number
+        max_duration:
+          type: number
+        connections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Connection'
+    Connection:
+      type: object
+      properties:
+        from:
+          type: string
+        arrival:
+          type: string
+        disruptions:
+          type: array
+          items:
+            type: object
+        legs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Leg'
+        duration:
+          type: number
+        to:
+          type: string
+        departure:
+          type: string
+    Leg:
+      type: object

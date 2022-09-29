@@ -1,3 +1,3 @@
 export default {
-    sbb: (await import('./sbb.ts')).default
+    sbb: (await import('./sbb')).default
 }

@@ -16,6 +16,9 @@ paths:
   /completion:
     get:
       summary: Autocompletion for station names
+      tags:
+        - autocomplete
+      operationId: test
       parameters:
         - name: term
           in: query
@@ -41,10 +44,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CompletionResponses'
+                type: array
+                items:
+                  $ref: '#/components/schemas/CompletionResponse'
   /route:
     get:
       summary: Route searches
+      tags:
+        - route
       parameters:
         - name: from
           in: query
@@ -119,59 +126,154 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RouteSearchResponses'
+  /station:
+    get:
+      summary: Get station information
+      tags: 
+        - station
+      parameters:
+        - name: stop
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StationResponse'
+  /stationboard:
+    get:
+      summary: Get station board
+      tags:
+        - station board
+      parameters:
+        - name: stop
+          required: true
+          in: query
+          schema:
+            type: string
+        - name: date
+          in: query
+          schema:
+            type: string
+            default: today
+        - name: time
+          in: query
+          schema:
+            type: string
+            default: now
+        - name: mode
+          in: query
+          schema:
+            type: string
+            enum: [arrival, depart]
+            default: depart
+        - name: limit
+          in: query
+          schema:
+            type: number
+        - name: show_tracks
+          in: query
+          schema:
+            $ref: '#/components/schemas/NumBoolean'
+        - name: show_subsequent_stops
+          in: query
+          schema:
+            $ref: '#/components/schemas/NumBoolean'
+        - name: show_delays
+          in: query
+          schema:
+            $ref: '#/components/schemas/NumBoolean'
+        - name: show_trackchanges
+          in: query
+          schema:
+            $ref: '#/components/schemas/NumBoolean'
+        - name: transportation_types
+          in: query
+          schema:
+            type: string
+            enum: [train, tram, bus, ship, cableway]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StationBoardResponse'
 components:
   schemas:
     NumBoolean:
+      description: 0 = false, 1 = true
       type: number
       enum: [0,1]
       default: 0
-    CompletionResponses:
-      type: array
-      items:
-        $ref: '#/components/schemas/CompletionResponse'
     CompletionResponse:
       type: object
+      properties:
+        label:
+          description: Name of the stop
+          type: string
+        html:
+          description: HTML for autocompletion
+          type: string
+        iconClass:
+          description: Icon class for unknown icon library
+          type: string
+        x:
+          description: LV03 X coordinate
+          type: number
+        y:
+          description: LV03 Y coordinate
+          type: number
+        lat:
+          description: WGS84 latitude
+          type: number
+        lon:
+          description: WGS84 longitude
+          type: number
       required:
         - label
         - html
         - iconClass
-      properties:
-        label:
-          type: string
-        html:
-          type: string
-        iconClass:
-          type: string
-        x:
-          type: number
-        y:
-          type: number
-        lat:
-          type: number
-        lon:
-          type: number
     RouteSearchResponses:
       type: object
       properties:
         count:
+          description: Number of returned responses
           type: number
         min_duration:
+          description: Duration of the shortest trip [s]
           type: number
         max_duration:
+          description: Duration of the longest trip  [s]
           type: number
         connections:
           type: array
           items:
             $ref: '#/components/schemas/Connection'
+      required:
+        - count
     Connection:
       type: object
       properties:
         from:
+          description: From station
+          type: string
+        departure:
+          description: Departure time
+          type: string
+        to:
+          description: To station
           type: string
         arrival:
+          description: Arrival time
           type: string
         disruptions:
           type: array
+          description: Disruptions of this train
           items:
             type: object
         legs:
@@ -179,10 +281,243 @@ components:
           items:
             $ref: '#/components/schemas/Leg'
         duration:
+          description: Duration of this trip [s]
           type: number
-        to:
-          type: string
-        departure:
-          type: string
+      required:
+        - from
+        - to
+        - arrival
+        - departure
+        - legs
+        - duration
     Leg:
       type: object
+      properties:
+        type:
+          description: Type abbreviation
+          type: string
+        track:
+          description: Platform
+          type: string
+        terminal:
+          description: Name of the embark station
+          type: string
+        fgcolor:
+          description: Foreground hex color
+          type: string
+        number:
+          description: Train line and train number
+          type: string
+        bgcolor:
+          description: Background hex color
+          type: string
+        tripid:
+          description: Trip ID
+          type: string
+        exit:
+          description: Disembark Station
+          type: object
+          properties:
+            arrival:
+              description: Arrival time
+              type: string
+            sbb_name:
+              description: SBB Name
+              type: string
+            name:
+              description: Station name
+              type: string
+            stopid:
+              description: Stop ID
+              type: string
+            waittime:
+              description: Time to change trains [s]
+              type: number
+          required:
+            - arrival
+            - sbb_name
+            - name
+            - stopid
+            - waittime
+        runningtime:
+          description: Time until disembark
+          type: number
+        stopid:
+          description: Stop ID
+          type: string
+        line:
+          description: Line description
+          type: string
+        stops:
+          description: Intermediate stops
+          type: array
+          items:
+            $ref: '#/components/schemas/Stop'
+        sbb_name:
+          description: SBB Name
+          type: string
+        name:
+          description: Station name
+          type: string
+      required:
+        - type
+        - tripid
+        - runningtime
+        - stopid
+        - stops
+        - name
+        - sbb_name
+    Stop:
+      type: object
+      properties:
+        stopid:
+          description: Stop ID
+          type: string
+        name:
+          description: Station name
+          type: string
+        departure:
+          description: Departure time
+          type: string
+      required:
+        - stopid
+        - name
+        - departure
+    StationResponse:
+      type: object
+      properties:
+        id:
+          description: Station ID
+          type: string
+        name:
+          description: Station name
+          type: string
+        type:
+          description: Station type
+          type: string
+        x:
+          description: LV03 X coordinate
+          type: number
+        y:
+          description: LV03 Y coordinate
+          type: number
+        lat:
+          description: WGS84 latitude
+          type: number
+        lon:
+          description: WGS84 longitude
+          type: number
+        request:
+          description: Request type
+          type: string
+        eof:
+          description: EOF?
+          type: number
+      required:
+        - id
+        - name
+        - type
+        - x
+        - y
+        - lon
+        - lat
+        - request
+        - eof
+    StationBoardResponse:
+      type: object
+      properties:
+        stop: 
+          type: object
+          properties:
+            id:
+              description: Station ID
+              type: string
+            name:
+              description: Station name
+              type: string
+            x:
+              description: LV03 X coordinate
+              type: number
+            y:
+              description: LV03 Y coordinate
+              type: number
+            lat:
+              description: WGS84 latitude
+              type: number
+            lon:
+              description: WGS84 longitude
+              type: number
+          required:
+            - id
+            - name
+            - x
+            - y
+            - lon
+            - lat
+        connections:
+          type: array
+          items:
+            type: object
+            properties:
+              time:
+                description: Departure time
+                type: string
+              '*G':
+                type: string
+              '*L':
+                type: string
+              '*Z':
+                type: string
+              type:
+                description: Public transportation type (abbr)
+                type: string
+              line:
+                description: Public transportation line
+                type: string
+              operator:
+                description: Operator name
+                type: string
+              color:
+                description: Color (hex)
+                type: string
+              type_name:
+                description: Public transportation type
+                type: string
+              terminal:
+                description: Station information
+                type: object
+                properties:
+                  id:
+                    description: Station ID
+                    type: string
+                  name:
+                    description: Station name
+                    type: string
+                  x:
+                    description: LV03 X coordinate
+                    type: number
+                  y:
+                    description: LV03 Y coordinate
+                    type: number
+                  lat:
+                    description: WGS84 latitude
+                    type: number
+                  lon:
+                    description: WGS84 longitude
+                    type: number
+                required:
+                  - id
+                  - name
+                  - x
+                  - y
+                  - lon
+                  - lat
+            required:
+              - type
+              - operator
+              - type_name
+        request:
+          type: string
+        eof:
+          type: number
+

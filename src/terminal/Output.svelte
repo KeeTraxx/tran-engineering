@@ -4,10 +4,6 @@
   import HeaderOutput from "./HeaderOutput.svelte";
   import DebugOutput from "./DebugOutput.svelte";
 
-  const componentMap = {
-    debug: DebugOutput,
-  };
-
   export let output;
   let component;
   let type;
@@ -23,7 +19,7 @@
       component = HeaderOutput;
       break;
     default:
-      component = componentMap[output.type] || componentMap['debug'];
+      component = output.component || DebugOutput;
       break;
   }
 </script>

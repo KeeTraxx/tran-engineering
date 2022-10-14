@@ -55,7 +55,7 @@
 
 <svelte:window on:hashchange={runHash} />
 
-<div class="container">
+<div class="container" on:click={() => inputElement.focus()}>
   {#each [...emulatorState.getOutputs()] as output}
     <Output {output} />
   {/each}
@@ -72,6 +72,7 @@
         on:keydown={handleSpecialKeys}
         bind:this={inputElement}
       />
+      <span>{input}</span><span>_</span>
     </div>
   </form>
 </div>
@@ -79,17 +80,18 @@
 <style>
   .container {
     color: #999;
-    background-color: #111;
+    background-color: #222;
     font-family: monospace;
     line-height: 1.5em;
     overflow: auto;
   }
   input {
+    position: fixed;
     outline: none;
     border: none;
     flex: 1 1;
-    color: #999;
-    background-color: rgba(0, 0, 0, 0);
+    color: transparent;
+    background-color: transparent;
   }
 
   .input {

@@ -1,12 +1,12 @@
 import Component from './Component.svelte'
 
 export default {
-  function: (_, [from, to, time]) => {
+  function: () => {
 
     return {
       output: {
-        type: "sbb",
-        content: {from, to, time},
+        type: "about",
+        content: {},
         component: Component
       },
     };

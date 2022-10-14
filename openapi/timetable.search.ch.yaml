@@ -300,7 +300,7 @@ components:
           description: Platform
           type: string
         terminal:
-          description: Name of the embark station
+          description: Name of the terminal station
           type: string
         fgcolor:
           description: Foreground hex color
@@ -360,11 +360,7 @@ components:
           description: Station name
           type: string
       required:
-        - type
-        - tripid
-        - runningtime
         - stopid
-        - stops
         - name
         - sbb_name
     Stop:
@@ -463,10 +459,13 @@ components:
                 description: Departure time
                 type: string
               '*G':
+                description: Transport type abbreviation
                 type: string
               '*L':
+                description: Line number
                 type: string
               '*Z':
+                description: Train number
                 type: string
               type:
                 description: Public transportation type (abbr)

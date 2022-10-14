@@ -7,11 +7,15 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "apis": "npm-run-all api:*",
+    "api:timetable.search.ch.yaml": "openapi-generator-cli generate -i openapi/timetable.search.ch.yaml -g typescript-fetch --additional-properties=supportsES6=true -o src/gen/timetable"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.5.2",
     "@sveltejs/vite-plugin-svelte": "^1.0.2",
     "@tsconfig/svelte": "^3.0.0",
+    "npm-run-all": "^4.1.5",
     "svelte": "^3.49.0",
     "svelte-check": "^2.8.1",
     "svelte-preprocess": "^4.10.7",
@@ -22,6 +26,7 @@
   "dependencies": {
     "aalib.js": "^2.0.0",
     "css-reset-and-normalize": "^2.3.6",
-    "javascript-terminal": "^1.1.1"
+    "javascript-terminal": "^1.1.1",
+    "moment": "^2.29.4"
   }
 }

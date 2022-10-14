@@ -1,8 +1,9 @@
 <script lang="ts">
   import * as Terminal from "javascript-terminal";
   import Output from "./Output.svelte";
-  import customCommands from './custom-commands';
+  import customCommands from "./custom-commands";
   let input;
+  let inputElement: HTMLInputElement;
   let prompt = "$";
 
   const emulator = new Terminal.Emulator();
@@ -10,12 +11,12 @@
   console.log(customCommands);
 
   const customCommandMapping = Terminal.CommandMapping.create({
-  ...Terminal.defaultCommandMapping,
-  ...customCommands
-});
+    ...Terminal.defaultCommandMapping,
+    ...customCommands,
+  });
 
   let emulatorState = Terminal.EmulatorState.create({
-    'commandMapping': customCommandMapping
+    commandMapping: customCommandMapping,
   });
   const historyKeyboardPlugin = new Terminal.HistoryKeyboardPlugin(
     emulatorState
@@ -25,6 +26,7 @@
   function runCommand(cmd: string) {
     emulatorState = emulator.execute(emulatorState, cmd, plugins);
     input = "";
+    setTimeout(() => inputElement.scrollIntoView(), 20);
   }
 
   function handleSpecialKeys(ev: KeyboardEvent) {
@@ -37,17 +39,28 @@
         return (input = historyKeyboardPlugin.completeDown());
       case "Tab":
         ev.preventDefault();
-        return input = emulator.autocomplete(emulatorState, input);
+        return (input = emulator.autocomplete(emulatorState, input));
     }
   }
+
+  function runHash() {
+    if (window.location.hash) {
+      const cmd = decodeURIComponent(window.location.hash.substring(1));
+      runCommand(cmd);
+    }
+  }
+  runCommand('motd');
+  runHash();
 </script>
+
+<svelte:window on:hashchange={runHash} />
 
 <div class="container">
   {#each [...emulatorState.getOutputs()] as output}
-    <Output output={output} />
+    <Output {output} />
   {/each}
 
-  <form on:submit|preventDefault={() => runCommand(input)} autocomplete="off">
+  <form on:submit|preventDefault={() => {window.location.hash === `#${input}` ? runHash() : '';window.location.hash = input}} autocomplete="off">
     <div class="input">
       <span>{prompt}&nbsp;</span>
       <!-- svelte-ignore a11y-autofocus -->
@@ -57,23 +70,26 @@
         autofocus
         bind:value={input}
         on:keydown={handleSpecialKeys}
+        bind:this={inputElement}
       />
     </div>
   </form>
 </div>
 
 <style>
-  * {
+  .container {
     color: #999;
     background-color: #111;
     font-family: monospace;
     line-height: 1.5em;
+    overflow: auto;
   }
-
   input {
     outline: none;
     border: none;
     flex: 1 1;
+    color: #999;
+    background-color: rgba(0, 0, 0, 0);
   }
 
   .input {
@@ -83,9 +99,5 @@
 
   .container {
     flex: 1 1;
-  }
-
-  .header::before {
-    content: "$ ";
   }
 </style>

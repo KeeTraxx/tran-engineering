@@ -11,9 +11,11 @@
   switch (output.type) {
     case Terminal.OutputType.TEXT_OUTPUT_TYPE:
       component = TextOutput;
+      type = output.type;
       break;
     case Terminal.OutputType.TEXT_ERROR_OUTPUT_TYPE:
       component = TextOutput;
+      type = output.type;
       break;
     case Terminal.OutputType.HEADER_OUTPUT_TYPE:
       component = HeaderOutput;

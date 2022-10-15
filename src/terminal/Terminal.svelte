@@ -4,6 +4,7 @@
   import customCommands from "./custom-commands";
   let input;
   let inputElement: HTMLInputElement;
+  let cursorElement: HTMLSpanElement;
   let prompt = "$";
 
   const emulator = new Terminal.Emulator();
@@ -64,6 +65,7 @@
     <div class="input">
       <span>{prompt}&nbsp;</span>
       <!-- svelte-ignore a11y-autofocus -->
+      <span>{input}</span><span bind:this={cursorElement} class="cursor">_</span>
       <input
         id="input"
         type="text"
@@ -72,31 +74,47 @@
         on:keydown={handleSpecialKeys}
         bind:this={inputElement}
       />
-      <span>{input}</span><span>_</span>
     </div>
   </form>
 </div>
 
 <style>
   .container {
+    padding: 2em;
     color: #999;
     background-color: #222;
     font-family: monospace;
-    line-height: 1.5em;
+    font-size: 1rem;
+    line-height: 1.2em;
     overflow: auto;
   }
+
   input {
-    position: fixed;
     outline: none;
     border: none;
-    flex: 1 1;
     color: transparent;
     background-color: transparent;
+    width: 1px;
+    height: 1px;
   }
 
   .input {
     display: flex;
     flex-direction: row;
+  }
+
+  .cursor {
+    animation: cursor-fade 1s ease-in-out infinite reverse;
+  }
+
+  @keyframes cursor-fade {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
   }
 
   .container {

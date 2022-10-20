@@ -1,6 +1,11 @@
+import sbb from './sbb';
+import about from './about';
+import contact from './contact';
+import motd from './motd';
+
 export default {
-    sbb: (await import('./sbb')).default,
-    about: (await import('./about')).default,
-    contact: (await import('./contact')).default,
-    motd: (await import('./motd')).default,
+    sbb,
+    about,
+    contact,
+    motd,
 }

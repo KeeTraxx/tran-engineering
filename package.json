@@ -24,8 +24,10 @@
     "vite": "^3.1.0"
   },
   "dependencies": {
+    "@types/d3": "^7.4.0",
     "aalib.js": "^2.0.0",
     "css-reset-and-normalize": "^2.3.6",
+    "d3": "^7.6.1",
     "javascript-terminal": "^1.1.1",
     "moment": "^2.29.4"
   }

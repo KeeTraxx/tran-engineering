@@ -2,14 +2,14 @@
   import * as Terminal from "javascript-terminal";
   import Output from "./Output.svelte";
   import customCommands from "./custom-commands";
+  import GravityWell from "./GravityWell.svelte";
   let input;
   let inputElement: HTMLInputElement;
   let cursorElement: HTMLSpanElement;
-  let prompt = "$";
+  let prompt = "tran-engineering.ch>";
+  let spawnPosition;
 
   const emulator = new Terminal.Emulator();
-
-  console.log(customCommands);
 
   const customCommandMapping = Terminal.CommandMapping.create({
     ...Terminal.defaultCommandMapping,
@@ -31,6 +31,7 @@
   }
 
   function handleSpecialKeys(ev: KeyboardEvent) {
+    spawnPosition = cursorElement.getBoundingClientRect();
     switch (ev.key) {
       case "ArrowUp":
         ev.preventDefault();
@@ -76,6 +77,7 @@
       />
     </div>
   </form>
+  <GravityWell cursorElement={cursorElement} />
 </div>
 
 <style>
@@ -83,7 +85,6 @@
     padding: 2em;
     color: #999;
     background-color: #222;
-    font-family: monospace;
     font-size: 1rem;
     line-height: 1.2em;
     overflow: auto;

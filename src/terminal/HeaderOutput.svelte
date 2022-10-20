@@ -3,7 +3,7 @@
   export let type;
 </script>
 
-<div data-type={type}>$&nbsp;{content.command}</div>
+<div data-type={type}>tran-engineering.ch>&nbsp;{content.command}</div>
 
 <style>
   div {

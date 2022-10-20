@@ -4,6 +4,10 @@ body {
   height: 100vh;
 }
 
+body, pre {
+  font-family: 'Fira Code', monospace !important;
+}
+
 a, a:visited {
   color: #ccc;
 }

@@ -4,13 +4,10 @@
   export let cursorElement: HTMLElement;
   let letters = [];
 
-  function spawn(
-    ev: KeyboardEvent & { currentTarget: EventTarget & Window }
-  ): any {
-    console.log(ev, cursorElement);
+  export function spawn(key): any {
     const spawnPosition = cursorElement.getBoundingClientRect();
     letters.push({
-      letter: ev.key,
+      letter: key,
       x: spawnPosition.x,
       y: spawnPosition.y,
       r: 0,
@@ -19,31 +16,33 @@
       vr: Math.random() * 3,
       bounces: 0,
     });
-    console.log(letters);
     letters = [...letters];
   }
 
   function tick() {
     requestAnimationFrame(() => {
       letters = [
-        ...letters.map((l) => {
-          if (l.x < 0 || l.x > window.innerWidth ) {
-            l.vx *= -0.5;
-            l.bounces++;
-          }
+        ...letters
+          .map((l) => {
+            if (l.x < 0 || l.x > window.innerWidth) {
+              l.vx *= -0.5;
+              l.bounces++;
+            }
 
-          if (l.y > window.innerHeight && l.vy > 0) {
-            l.vy *= -0.5;
-            l.bounces++;
-          }
+            if (l.y > window.innerHeight && l.vy > 0) {
+              l.vy *= -0.5;
+              l.bounces++;
+            }
 
-          return { ...l, 
-            x: l.x + l.vx, 
-            y: l.y + l.vy, 
-            vy: l.vy + 0.2,
-            r: l.r + l.vr
-          };
-        }).filter(({bounces}) => bounces < 8),
+            return {
+              ...l,
+              x: l.x + l.vx,
+              y: l.y + l.vy,
+              vy: l.vy + 0.2,
+              r: l.r + l.vr,
+            };
+          })
+          .filter(({ bounces }) => bounces < 8),
       ];
       tick();
     });
@@ -52,10 +51,12 @@
   onMount(() => tick());
 </script>
 
-<svelte:window on:keydown={(ev) => spawn(ev)} />
-
 {#each letters as letter}
-  <div style:left={letter.x + "px"} style:top={letter.y + "px"} style:transform={`rotate(${letter.r}deg)`}>
+  <div
+    style:left={letter.x + "px"}
+    style:top={letter.y + "px"}
+    style:transform={`rotate(${letter.r}deg)`}
+  >
     {letter.letter}
   </div>
 {/each}

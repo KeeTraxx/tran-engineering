@@ -8,6 +8,7 @@
   let cursorElement: HTMLSpanElement;
   let prompt = "tran-engineering.ch>";
   let spawnPosition;
+  let gravityWell;
 
   const emulator = new Terminal.Emulator();
 
@@ -73,11 +74,12 @@
         autofocus
         bind:value={input}
         on:keydown={handleSpecialKeys}
+        on:input={ev => gravityWell.spawn(ev.target.value.at(-1))}
         bind:this={inputElement}
       />
     </div>
   </form>
-  <GravityWell cursorElement={cursorElement} />
+  <GravityWell bind:this={gravityWell} cursorElement={cursorElement} />
 </div>
 
 <style>

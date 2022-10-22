@@ -34,7 +34,7 @@
       .style('transform', (_, i) => null);
   }
 </script>
-<pre bind:this={logoElement} style="overflow: hidden;" on:click={() => dance()}>
+<pre bind:this={logoElement} style="overflow: auto;" on:click={() => dance()}>
 
    _                                        (_)                      (_)            
   | |_   ____ ____ ____ ___ ____ ____   ____ _ ____   ____ ____  ____ _ ____   ____ 
@@ -45,7 +45,7 @@
 
 </pre>
 
-<pre>
+<div>
 Available commands: <a href="#about">about</a>, <a href="#contact">contact</a>, <a href="#sbb">sbb</a>
 
-</pre>
+</div>
